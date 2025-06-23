@@ -1,0 +1,20 @@
+FROM node:18-alpine
+ 
+WORKDIR /app
+ 
+# Copier d'abord les fichiers de dépendances pour utiliser le cache Docker
+COPY package*.json ./
+ 
+RUN npm install
+ 
+# Copier le reste des fichiers
+COPY . .
+ 
+# Exposer le port pour le serveur de développement React
+EXPOSE 3000
+ 
+# Configurer un volume pour le hot reloading
+VOLUME ["/app/src"]
+ 
+# Démarrer l'application en mode développement
+CMD ["npm", "start"]

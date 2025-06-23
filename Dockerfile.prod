@@ -1,0 +1,26 @@
+FROM node:18-alpine AS build
+
+WORKDIR /app
+
+# Copier d'abord les fichiers de dépendances pour utiliser le cache Docker
+COPY package*.json ./
+RUN npm install
+
+# Copier le reste des fichiers
+COPY . .
+
+
+# Build de l'application 
+RUN npm run build
+
+# Étape 2: Servir l'application avec un serveur web léger
+FROM nginx:alpine
+
+# Copier les fichiers de build dans le répertoire de NGINX
+COPY --from=build /app/build /usr/share/nginx/html
+
+# Exposer le port 80 pour nginx
+EXPOSE 80
+
+# Démarrer NGINX
+CMD ["nginx", "-g", "daemon off;"]
