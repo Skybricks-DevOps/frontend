@@ -3,14 +3,33 @@ name: Build and Push Docker image (Frontend)
 on:
   push:
     branches: [main]
+  workflow_run:
+    workflows: ["CodeQL Frontend"]
+    types:
+      - completed
+    branches: [main]
 
 jobs:
   docker:
+    # Ne s'exécute que si le workflow CodeQL a réussi
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      # Ajout d'une étape pour les tests unitaires
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm run lint
 
       - name: Set lowercase owner
         id: vars
