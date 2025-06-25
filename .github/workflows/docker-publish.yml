@@ -11,8 +11,10 @@ on:
 
 jobs:
   docker:
-    # Ne s'exécute que si le workflow CodeQL a réussi
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    # Modified condition to be more permissive and explicit
+    if: |
+      github.event_name == 'push' || 
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
 
     steps:
