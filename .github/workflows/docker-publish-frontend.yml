@@ -1,37 +1,19 @@
-name: Build and Push Docker image (Frontend)
+name: Build and Push Docker image (frontend)
 
 on:
-  push:
-    branches: [main]
   workflow_run:
-    workflows: ["CodeQL Frontend"]
+    workflows: ["Trivy Frontend Scan"]
     types:
       - completed
-    branches: [main]
 
 jobs:
   docker:
-    # Modified condition to be more permissive and explicit
-    if: |
-      github.event_name == 'push' || 
-      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
-      # Ajout d'une étape pour les tests unitaires
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run tests
-        run: npm run lint
 
       - name: Set lowercase owner
         id: vars
