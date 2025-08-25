@@ -33,3 +33,4 @@ jobs:
           docker push ghcr.io/${{ env.OWNER_LC }}/frontend:latest
           docker push ghcr.io/${{ env.OWNER_LC }}/frontend:${{ env.SHORT_SHA }}
 #trigger workflow
+#trigger workflow1
